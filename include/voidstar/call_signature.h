@@ -34,15 +34,24 @@ struct call_signature<detail::default_abi_var_fn<R, T...>> {
 
 template <typename T> struct call_signature<T *> : call_signature<T> {};
 
+template <typename P, typename> struct can_std_apply;
+template <typename P, typename... A>
+struct can_std_apply<P, std::tuple<A...>> : std::is_invocable<P, A...> {};
+
+// clang-format off
 template <typename P, typename C>
-concept matches = requires {
-  typename C::return_type;
-  typename C::arg_types;
-}
-and requires(P payload, typename C::arg_types const &arg_tuple) {
-  {
-    std::apply(payload, arg_tuple)
-    } -> std::convertible_to<typename C::return_type>;
-};
+concept matches =
+  requires {
+    typename C::return_type;
+    typename C::arg_types;
+  }
+
+  and can_std_apply<P, typename C::arg_types>::value
+
+  and requires(P payload, typename C::arg_types const &arg_tuple) {
+    {std::apply(payload, arg_tuple)}
+      -> std::convertible_to<typename C::return_type>;
+  };
+// clang-format on
 
 } // namespace voidstar
