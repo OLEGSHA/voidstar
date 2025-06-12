@@ -13,3 +13,4 @@ add_executable(main src/main.cpp src/libstupid.cpp)
 target_link_libraries(main PUBLIC voidstar)
 
 add_subdirectory(example)
+add_subdirectory(test)
