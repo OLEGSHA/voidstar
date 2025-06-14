@@ -19,7 +19,9 @@ namespace voidstar::detail::ffi {
 
 template <bool signedness, std::size_t size, std::size_t alignment>
 inline constexpr ::ffi_type *integer_type =
-    std::enable_if_t<dependent_false<size>{}, ::ffi_type *>{nullptr};
+    // Disable base template
+    std::enable_if_t<dependent_false<std::bool_constant<signedness>>{},
+                     ::ffi_type *>{nullptr};
 
 // clang-format off
 #define VOIDSTAR_DEFINE_INTEGER_TYPE_LOOKUP(CPP_TYPE, FFI_VAR)                 \

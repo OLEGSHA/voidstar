@@ -12,7 +12,7 @@ struct pin {
   auto operator=(pin const &) -> pin & = delete;
 };
 
-template <auto> struct dependent_false : std::false_type {};
+template <typename> struct dependent_false : std::false_type {};
 
 template <std::integral auto V>
 static constexpr std::integral_constant<decltype(V), V> constant;
