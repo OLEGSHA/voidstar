@@ -43,6 +43,10 @@ requires std::is_bounded_array_v<T>
 struct type_description<T>;
 
 template <typename T>
+requires std::is_union_v<T>
+struct type_description<T>;
+
+template <typename T>
 requires has_layout<T>
 struct type_description<T>;
 
@@ -88,6 +92,19 @@ public:
   [[nodiscard]] constexpr auto raw() noexcept -> ::ffi_type * {
     return &this->m_raw;
   }
+};
+
+template <typename T>
+requires std::is_union_v<T>
+struct type_description<T> {
+  // libffi doesn't have robust union support. Determining safe cases is not yet
+  // supported by voidstar.
+  //
+  // The often-cited "struct with greatest member" doesn't actually work with
+  // some union types, such as union{int, float} on x86_64.
+  //
+  // See https://github.com/libffi/libffi/issues/33 for more details.
+  static_assert(dependent_false<T>::value, "Union types are not yet supported");
 };
 
 template <typename T, typename member_types> struct struct_type_description;
