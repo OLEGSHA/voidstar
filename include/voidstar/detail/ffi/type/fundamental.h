@@ -99,12 +99,4 @@ VOIDSTAR_DEFINE_TYPE(_Complex long double, ffi_type_complex_longdouble)
 
 #undef VOIDSTAR_DEFINE_TYPE
 
-template <typename T>
-requires std::is_pointer_v<T>
-struct type_description<T> {
-  [[nodiscard]] static constexpr auto raw() noexcept -> ::ffi_type * {
-    return &::ffi_type_pointer;
-  }
-};
-
 } // namespace voidstar::detail::ffi

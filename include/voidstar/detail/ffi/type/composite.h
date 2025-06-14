@@ -23,12 +23,28 @@ template <std::size_t N> struct member_list : std::array<::ffi_type *, N + 1> {
   }
 };
 
+// clang-format off
+template <typename T>
+concept generic_pointer =
+  (std::is_pointer_v<T> or std::is_member_pointer_v<T>)
+  and
+  (sizeof(T) == sizeof(void *) and alignof(T) == alignof(void *));
+// clang-format on
+
 // To enable arbitrarily nested specialization usage, all declarations must
 // occur before all definitions.
 
 ////////////////////////////////////////////////////////////////////////////////
 // Declarations
 //
+
+template <typename T>
+requires generic_pointer<T>
+struct type_description<T>;
+
+template <typename T>
+requires std::is_unbounded_array_v<T>
+struct type_description<T>;
 
 template <typename T>
 requires std::is_bounded_array_v<T>
@@ -41,6 +57,19 @@ struct type_description<T>;
 ////////////////////////////////////////////////////////////////////////////////
 // Definitions
 //
+
+template <typename T>
+requires generic_pointer<T>
+struct type_description<T> {
+  [[nodiscard]] static constexpr auto raw() noexcept -> ::ffi_type * {
+    return &::ffi_type_pointer;
+  }
+};
+
+template <typename T>
+requires std::is_unbounded_array_v<T>
+struct type_description<T> : type_description<void *> {
+};
 
 template <typename T>
 requires std::is_bounded_array_v<T>
@@ -71,6 +100,10 @@ template <typename T, typename... M>
 class struct_type_description<T, std::tuple<M...>> {
 private:
   static constexpr auto size = sizeof...(M);
+
+  static_assert((... and not std::is_unbounded_array_v<M>),
+                "Unbounded arrays cannot be member types. Structs with "
+                "flexible array members (C feature) are not supported.");
 
   std::tuple<type_description<M>...> m_members;
   member_list<size> m_member_list{{std::get<M>(m_members).raw()...}};
