@@ -23,14 +23,6 @@ template <std::size_t N> struct member_list : std::array<::ffi_type *, N + 1> {
   }
 };
 
-// clang-format off
-template <typename T>
-concept generic_pointer =
-  (std::is_pointer_v<T> or std::is_member_pointer_v<T>)
-  and
-  (sizeof(T) == sizeof(void *) and alignof(T) == alignof(void *));
-// clang-format on
-
 // To enable arbitrarily nested specialization usage, all declarations must
 // occur before all definitions.
 
@@ -39,11 +31,7 @@ concept generic_pointer =
 //
 
 template <typename T>
-requires generic_pointer<T>
-struct type_description<T>;
-
-template <typename T>
-requires std::is_unbounded_array_v<T>
+requires std::is_pointer_v<T> or std::is_unbounded_array_v<T>
 struct type_description<T>;
 
 template <typename T>
@@ -59,16 +47,11 @@ struct type_description<T>;
 //
 
 template <typename T>
-requires generic_pointer<T>
+requires std::is_pointer_v<T> or std::is_unbounded_array_v<T>
 struct type_description<T> {
   [[nodiscard]] static constexpr auto raw() noexcept -> ::ffi_type * {
     return &::ffi_type_pointer;
   }
-};
-
-template <typename T>
-requires std::is_unbounded_array_v<T>
-struct type_description<T> : type_description<void *> {
 };
 
 template <typename T>
