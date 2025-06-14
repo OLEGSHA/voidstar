@@ -35,6 +35,10 @@ requires std::is_pointer_v<T> or std::is_unbounded_array_v<T>
 struct type_description<T>;
 
 template <typename T>
+requires std::is_enum_v<T>
+struct type_description<T>;
+
+template <typename T>
 requires std::is_bounded_array_v<T>
 struct type_description<T>;
 
@@ -51,6 +55,15 @@ requires std::is_pointer_v<T> or std::is_unbounded_array_v<T>
 struct type_description<T> {
   [[nodiscard]] static constexpr auto raw() noexcept -> ::ffi_type * {
     return &::ffi_type_pointer;
+  }
+};
+
+template <typename T>
+requires std::is_enum_v<T>
+struct type_description<T> {
+  [[nodiscard]] constexpr auto raw() noexcept -> ::ffi_type * {
+    using U = std::underlying_type_t<T>;
+    return integer_type<std::is_signed_v<U>, sizeof(U), alignof(U)>;
   }
 };
 
