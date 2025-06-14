@@ -8,6 +8,7 @@
 #include <thread>
 
 namespace voidstar::test {
+namespace {
 
 TEST(closure, lifetime) {
   struct payload {
@@ -112,4 +113,5 @@ TEST(closure, no_thread_locality) {
   EXPECT_EQ(calls, 2);
 }
 
+} // namespace
 } // namespace voidstar::test

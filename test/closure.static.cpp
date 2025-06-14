@@ -3,6 +3,7 @@
 #include <type_traits>
 
 namespace voidstar::test {
+namespace {
 
 ////////////////////////////////////////////////////////////////////////////////
 // Type properties
@@ -177,4 +178,5 @@ using c_fn_ptr_vv = void (*)();
 static_assert(closure_valid<c_fn_vv, decltype([] {})>);
 static_assert(closure_valid<c_fn_ptr_vv, decltype([] {})>);
 
+} // namespace
 } // namespace voidstar::test
