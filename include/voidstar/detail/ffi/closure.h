@@ -15,14 +15,25 @@ namespace voidstar::detail::ffi {
 class closure {
 private:
   struct deleter {
-    void operator()(::ffi_closure *writable) const noexcept;
+    void operator()(::ffi_closure *writable) const noexcept {
+      ::ffi_closure_free(writable);
+    }
   };
 
   void *m_executable_ptr;
   std::unique_ptr<::ffi_closure, deleter> m_raw;
 
 public:
-  closure();
+  closure()
+      : m_executable_ptr{nullptr},
+        m_raw{
+            static_cast<::ffi_closure *>(
+                ::ffi_closure_alloc(sizeof(::ffi_closure), &m_executable_ptr)),
+        } {
+    if (m_raw == nullptr or m_executable_ptr == nullptr) {
+      throw ffi_error{"Could not allocate an FFI closure"};
+    }
+  }
 
   [[nodiscard]] auto executable_ptr() const noexcept -> void * {
     return m_executable_ptr;
@@ -33,11 +44,6 @@ public:
   };
 };
 
-void prep_closure_loc(::ffi_closure *closure, ::ffi_cif *cif,
-                      void (*fun)(::ffi_cif *cif, void *ret, void **args,
-                                  void *user_data),
-                      void *user_data, void *codeloc);
-
 template <typename call_signature> class basic_prepared_closure {
 private:
   cif<call_signature> m_cif;
@@ -46,8 +52,12 @@ private:
 protected:
   basic_prepared_closure(void (*entrypoint)(::ffi_cif *cif, void *ret,
                                             void **args, void *user_data)) {
-    prep_closure_loc(m_closure.raw(), m_cif.raw(), entrypoint, this,
-                     m_closure.executable_ptr());
+    ffi_call(::ffi_prep_closure_loc, "ffi_prep_closure_loc") //
+        (/* closure = */ m_closure.raw(),
+         /* cif = */ m_cif.raw(),
+         /* fun = */ entrypoint,
+         /* user_data = */ this,
+         /* codeloc = */ m_closure.executable_ptr());
   }
 
 public:

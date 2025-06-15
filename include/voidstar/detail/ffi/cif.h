@@ -1,6 +1,7 @@
 #pragma once
 
 #include <voidstar/call_signature.h>
+#include <voidstar/detail/ffi/error.h>
 #include <voidstar/detail/ffi/type.h>
 #include <voidstar/detail/misc.h>
 
@@ -12,8 +13,6 @@
 #include <span>
 
 namespace voidstar::detail::ffi {
-
-void prep_cif(::ffi_cif &cif, ::ffi_type &rtype, std::span<ffi_type *> atypes);
 
 template <typename call_signature, typename arg_types> struct cif_impl;
 
@@ -34,7 +33,14 @@ private:
   [[no_unique_address]] pin m_pin;
 
 public:
-  cif_impl() { prep_cif(m_raw, *m_return_type.raw(), m_arg_type_list); }
+  cif_impl() {
+    ffi_call(::ffi_prep_cif, "ffi_prep_cif") //
+        (/* cif = */ &m_raw,
+         /* abi = */ FFI_DEFAULT_ABI,
+         /* nargs = */ m_arg_type_list.size(),
+         /* rtype = */ m_return_type.raw(),
+         /* atypes = */ m_arg_type_list.data());
+  }
 
   [[nodiscard]] constexpr auto raw() noexcept -> ::ffi_cif * { return &m_raw; }
 };

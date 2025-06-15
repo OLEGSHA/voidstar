@@ -5,9 +5,9 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_library(voidstar STATIC src/ffi.cpp)
-target_include_directories(voidstar PUBLIC include)
-target_link_libraries(voidstar PUBLIC ffi)
+add_library(voidstar INTERFACE)
+target_include_directories(voidstar INTERFACE include)
+target_link_libraries(voidstar INTERFACE ffi)
 
 add_subdirectory(example)
 add_subdirectory(test)
