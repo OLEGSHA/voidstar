@@ -1,6 +1,6 @@
 #pragma once
 
-#include <voidstar/call_signature.h>
+#include <voidstar/detail/call_signature.h>
 #include <voidstar/detail/ffi/closure.h>
 
 #include <memory>

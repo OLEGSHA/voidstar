@@ -1,6 +1,5 @@
 #pragma once
 
-#include <voidstar/call_signature.h>
 #include <voidstar/detail/ffi/error.h>
 #include <voidstar/detail/ffi/type.h>
 #include <voidstar/detail/misc.h>
