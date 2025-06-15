@@ -10,7 +10,7 @@
 namespace voidstar::test {
 namespace {
 
-TEST(closure, lifetime) {
+TEST(Closure, Lifetime) {
   struct payload {
     void operator()() {}
   };
@@ -18,7 +18,7 @@ TEST(closure, lifetime) {
   (void)object;
 }
 
-TEST(closure, payload_lifetime) {
+TEST(Closure, PayloadLifetime) {
   struct snowflake {};
 
   int value = 0;
@@ -38,7 +38,7 @@ TEST(closure, payload_lifetime) {
   EXPECT_EQ(value, 2);
 }
 
-TEST(closure, simple_call) {
+TEST(Closure, SimpleCall) {
   int calls = 0;
 
   struct payload {
@@ -54,7 +54,7 @@ TEST(closure, simple_call) {
   EXPECT_EQ(calls, 1);
 }
 
-TEST(closure, make_closure) {
+TEST(Closure, MakeClosure) {
   int calls = 0;
 
   EXPECT_EQ(calls, 0);
@@ -64,7 +64,7 @@ TEST(closure, make_closure) {
   EXPECT_EQ(calls, 1);
 }
 
-TEST(closure, many_closures) {
+TEST(Closure, ManyClosures) {
   constexpr std::size_t N = 1000;
 
   std::array<int, N> targets{};
@@ -92,7 +92,7 @@ TEST(closure, many_closures) {
   }
 }
 
-TEST(closure, no_thread_locality) {
+TEST(Closure, NoThreadLocality) {
   // Ensure that thread of origin and the thread of use are not important
 
   // std::jthread instead of std::async or similar to guarantee no thread reuse
