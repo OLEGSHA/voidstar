@@ -50,6 +50,9 @@ template <typename T>
 requires has_layout<T>
 struct type_description<T>;
 
+template <typename T>
+requires(not has_layout<T> and std::is_class_v<T>) struct type_description<T>;
+
 ////////////////////////////////////////////////////////////////////////////////
 // Definitions
 //
@@ -143,6 +146,13 @@ template <typename T>
 requires has_layout<T>
 struct type_description<T>
     : struct_type_description<T, typename layout<T>::members> {
+};
+
+template <typename T>
+requires(not has_layout<T> and std::is_class_v<T>) struct type_description<T> {
+  static_assert(dependent_false<T>::value,
+                "Memory layout of struct T must be specified using "
+                "a voidstar::detail::ffi::layout specialization");
 };
 
 } // namespace voidstar::detail::ffi
