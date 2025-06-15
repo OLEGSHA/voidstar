@@ -9,8 +9,5 @@ add_library(voidstar STATIC src/ffi.cpp)
 target_include_directories(voidstar PUBLIC include)
 target_link_libraries(voidstar PUBLIC ffi)
 
-add_executable(main src/main.cpp src/libstupid.cpp)
-target_link_libraries(main PUBLIC voidstar)
-
 add_subdirectory(example)
 add_subdirectory(test)
