@@ -116,16 +116,19 @@ private:
 
   static_assert((... and not std::is_unbounded_array_v<M>),
                 "Unbounded arrays cannot be member types. Structs with "
-                "flexible array members (C feature) are not supported.");
+                "flexible array members (C99 feature) are not supported.");
 
   std::tuple<type_description<M>...> m_members;
-  member_list<size> m_member_list{{std::get<M>(m_members).raw()...}};
+
+  member_list<size> m_member_list{std::apply(
+      [](auto const &...m) -> member_list<size> { return {m.raw()...}; },
+      m_members)};
 
   ::ffi_type m_raw{
       .size = sizeof(T),
       .alignment = alignof(T),
       .type = FFI_TYPE_STRUCT,
-      .members = m_member_list.data(),
+      .elements = m_member_list.data(),
   };
 
   [[no_unique_address]] pin m_pin;
