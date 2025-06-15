@@ -37,10 +37,10 @@ public:
 
 } // namespace detail
 
-template <typename F, matches<call_signature<F>> P>
-using closure = detail::closure_impl<call_signature<F>, P>;
+template <typename F, detail::matches<detail::call_signature<F>> P>
+using closure = detail::closure_impl<detail::call_signature<F>, P>;
 
-template <typename F, matches<call_signature<F>> P>
+template <typename F, detail::matches<detail::call_signature<F>> P>
 auto make_closure(P payload) -> closure<F, P> {
   return closure<F, P>{std::move(payload)};
 }

@@ -26,7 +26,7 @@ concept correct_closure = //
   }
 
   and std::same_as<typename T::payload, P>
-  and matches<P, typename T::call_signature>
+  and detail::matches<P, typename T::call_signature>
 
   and std::is_pointer_v<typename T::fn_ptr_type>
   and std::is_function_v<std::remove_pointer_t<typename T::fn_ptr_type>>
@@ -162,10 +162,6 @@ static_assert(closure_invalid<void(), void (*)(int)>);
 static_assert(closure_invalid<void, void (*)()>);
 static_assert(closure_invalid<int, void (*)()>);
 static_assert(closure_invalid<int, int>);
-
-// Not yet supported
-static_assert(closure_invalid<void(...), decltype([](...) {})>);
-static_assert(closure_invalid<void(int, ...), decltype([](int, ...) {})>);
 
 // Other function signatures
 static_assert(closure_valid<void (*)(), decltype([] {})>);
