@@ -65,6 +65,17 @@ TEST(Closure, MakeClosure) {
   EXPECT_EQ(calls, 1);
 }
 
+TEST(Closure, ImplicitCast) {
+  int calls = 0;
+
+  EXPECT_EQ(calls, 0);
+  auto cls = make_closure<void()>([&] { calls++; });
+  EXPECT_EQ(calls, 0);
+  void (*ptr)() = cls;
+  ptr();
+  EXPECT_EQ(calls, 1);
+}
+
 TEST(Closure, ManyClosures) {
   constexpr std::size_t N = 1000;
 
