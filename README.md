@@ -1,7 +1,7 @@
 # voidstar
 
 ## TODO
-- [ ] Proper tests
+- [x] Proper tests
 - [ ] Main doc
 - [ ] Inline docs
 - [ ] Conan & proper CMake
@@ -10,4 +10,4 @@
 - [x] Example: background jobs
 - [ ] Example: logging interceptor
 - [ ] Example: difficult types
-- [ ] Header-only version?
+- [x] Header-only version?
