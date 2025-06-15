@@ -18,29 +18,29 @@ namespace voidstar::detail::ffi {
 //
 
 template <bool signedness, std::size_t size, std::size_t alignment>
-inline constexpr ::ffi_type *integer_type =
+inline constexpr ffi_type *integer_type =
     // Disable base template
     std::enable_if_t<dependent_false<std::bool_constant<signedness>>{},
-                     ::ffi_type *>{nullptr};
+                     ffi_type *>{nullptr};
 
 // clang-format off
 #define VOIDSTAR_DEFINE_INTEGER_TYPE_LOOKUP(CPP_TYPE, FFI_VAR)                 \
   template <>                                                                  \
-  inline constexpr ::ffi_type *integer_type<                                   \
+  inline constexpr ffi_type *integer_type<                                   \
       std::is_signed_v<CPP_TYPE>,                                              \
       sizeof(CPP_TYPE),                                                        \
       alignof(CPP_TYPE)                                                        \
   > = &FFI_VAR;
 // clang-format on
 
-VOIDSTAR_DEFINE_INTEGER_TYPE_LOOKUP(std::uint8_t, ::ffi_type_uint8)
-VOIDSTAR_DEFINE_INTEGER_TYPE_LOOKUP(std::int8_t, ::ffi_type_sint8)
-VOIDSTAR_DEFINE_INTEGER_TYPE_LOOKUP(std::uint16_t, ::ffi_type_uint16)
-VOIDSTAR_DEFINE_INTEGER_TYPE_LOOKUP(std::int16_t, ::ffi_type_sint16)
-VOIDSTAR_DEFINE_INTEGER_TYPE_LOOKUP(std::uint32_t, ::ffi_type_uint32)
-VOIDSTAR_DEFINE_INTEGER_TYPE_LOOKUP(std::int32_t, ::ffi_type_sint32)
-VOIDSTAR_DEFINE_INTEGER_TYPE_LOOKUP(std::uint64_t, ::ffi_type_uint64)
-VOIDSTAR_DEFINE_INTEGER_TYPE_LOOKUP(std::int64_t, ::ffi_type_sint64)
+VOIDSTAR_DEFINE_INTEGER_TYPE_LOOKUP(std::uint8_t, ffi_type_uint8)
+VOIDSTAR_DEFINE_INTEGER_TYPE_LOOKUP(std::int8_t, ffi_type_sint8)
+VOIDSTAR_DEFINE_INTEGER_TYPE_LOOKUP(std::uint16_t, ffi_type_uint16)
+VOIDSTAR_DEFINE_INTEGER_TYPE_LOOKUP(std::int16_t, ffi_type_sint16)
+VOIDSTAR_DEFINE_INTEGER_TYPE_LOOKUP(std::uint32_t, ffi_type_uint32)
+VOIDSTAR_DEFINE_INTEGER_TYPE_LOOKUP(std::int32_t, ffi_type_sint32)
+VOIDSTAR_DEFINE_INTEGER_TYPE_LOOKUP(std::uint64_t, ffi_type_uint64)
+VOIDSTAR_DEFINE_INTEGER_TYPE_LOOKUP(std::int64_t, ffi_type_sint64)
 
 #undef VOIDSTAR_DEFINE_INTEGER_TYPE_LOOKUP
 
@@ -50,7 +50,7 @@ VOIDSTAR_DEFINE_INTEGER_TYPE_LOOKUP(std::int64_t, ::ffi_type_sint64)
 
 #define VOIDSTAR_DEFINE_INTEGER_TYPE(CPP_TYPE)                                 \
   template <> struct type_description<CPP_TYPE> {                              \
-    [[nodiscard]] constexpr auto raw() noexcept -> ::ffi_type * {              \
+    [[nodiscard]] constexpr auto raw() noexcept -> ffi_type * {                \
       return integer_type<std::is_signed_v<CPP_TYPE>, sizeof(CPP_TYPE),        \
                           alignof(CPP_TYPE)>;                                  \
     }                                                                          \
@@ -83,7 +83,7 @@ VOIDSTAR_DEFINE_INTEGER_TYPE(bool)
 
 #define VOIDSTAR_DEFINE_TYPE(CPP_TYPE, FFI_VAR)                                \
   template <> struct type_description<CPP_TYPE> {                              \
-    [[nodiscard]] constexpr auto raw() noexcept -> ::ffi_type * {              \
+    [[nodiscard]] constexpr auto raw() noexcept -> ffi_type * {                \
       return &FFI_VAR;                                                         \
     }                                                                          \
   };

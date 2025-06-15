@@ -16,8 +16,8 @@
 
 namespace voidstar::detail::ffi {
 
-template <std::size_t N> struct member_list : std::array<::ffi_type *, N + 1> {
-  constexpr member_list(std::array<::ffi_type *, N> values) noexcept {
+template <std::size_t N> struct member_list : std::array<ffi_type *, N + 1> {
+  constexpr member_list(std::array<ffi_type *, N> values) noexcept {
     std::ranges::copy(values, this->data());
     (*this)[N] = nullptr;
   }
@@ -60,15 +60,15 @@ requires(not has_layout<T> and std::is_class_v<T>) struct type_description<T>;
 template <typename T>
 requires std::is_pointer_v<T> or std::is_unbounded_array_v<T>
 struct type_description<T> {
-  [[nodiscard]] static constexpr auto raw() noexcept -> ::ffi_type * {
-    return &::ffi_type_pointer;
+  [[nodiscard]] static constexpr auto raw() noexcept -> ffi_type * {
+    return &ffi_type_pointer;
   }
 };
 
 template <typename T>
 requires std::is_enum_v<T>
 struct type_description<T> {
-  [[nodiscard]] constexpr auto raw() noexcept -> ::ffi_type * {
+  [[nodiscard]] constexpr auto raw() noexcept -> ffi_type * {
     using U = std::underlying_type_t<T>;
     return integer_type<std::is_signed_v<U>, sizeof(U), alignof(U)>;
   }
@@ -82,7 +82,7 @@ private:
 
   type_description<std::remove_extent_t<T>> m_element;
   member_list<size> m_member_list = {n_copies<size>(m_element.raw())};
-  ::ffi_type m_raw{
+  ffi_type m_raw{
       .size = sizeof(T),
       .alignment = alignof(T),
       .type = FFI_TYPE_STRUCT,
@@ -92,7 +92,7 @@ private:
   [[no_unique_address]] pin m_pin;
 
 public:
-  [[nodiscard]] constexpr auto raw() noexcept -> ::ffi_type * {
+  [[nodiscard]] constexpr auto raw() noexcept -> ffi_type * {
     return &this->m_raw;
   }
 };
@@ -127,7 +127,7 @@ private:
       [](auto const &...m) -> member_list<size> { return {m.raw()...}; },
       m_members)};
 
-  ::ffi_type m_raw{
+  ffi_type m_raw{
       .size = sizeof(T),
       .alignment = alignof(T),
       .type = FFI_TYPE_STRUCT,
@@ -137,7 +137,7 @@ private:
   [[no_unique_address]] pin m_pin;
 
 public:
-  [[nodiscard]] constexpr auto raw() noexcept -> ::ffi_type * {
+  [[nodiscard]] constexpr auto raw() noexcept -> ffi_type * {
     return &this->m_raw;
   }
 };

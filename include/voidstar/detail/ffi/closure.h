@@ -15,20 +15,20 @@ namespace voidstar::detail::ffi {
 class closure {
 private:
   struct deleter {
-    void operator()(::ffi_closure *writable) const noexcept {
-      ::ffi_closure_free(writable);
+    void operator()(ffi_closure *writable) const noexcept {
+      ffi_closure_free(writable);
     }
   };
 
   void *m_executable_ptr;
-  std::unique_ptr<::ffi_closure, deleter> m_raw;
+  std::unique_ptr<ffi_closure, deleter> m_raw;
 
 public:
   closure()
       : m_executable_ptr{nullptr},
         m_raw{
-            static_cast<::ffi_closure *>(
-                ::ffi_closure_alloc(sizeof(::ffi_closure), &m_executable_ptr)),
+            static_cast<ffi_closure *>(
+                ffi_closure_alloc(sizeof(ffi_closure), &m_executable_ptr)),
         } {
     if (m_raw == nullptr or m_executable_ptr == nullptr) {
       throw ffi_error{"Could not allocate an FFI closure"};
@@ -39,7 +39,7 @@ public:
     return m_executable_ptr;
   };
 
-  [[nodiscard]] auto raw() const noexcept -> ::ffi_closure * {
+  [[nodiscard]] auto raw() const noexcept -> ffi_closure * {
     return m_raw.get();
   };
 };
@@ -50,9 +50,9 @@ private:
   closure m_closure;
 
 protected:
-  basic_prepared_closure(void (*entrypoint)(::ffi_cif *cif, void *ret,
+  basic_prepared_closure(void (*entrypoint)(ffi_cif *cif, void *ret,
                                             void **args, void *user_data)) {
-    ffi_call(::ffi_prep_closure_loc, "ffi_prep_closure_loc") //
+    ffi_call(ffi_prep_closure_loc, "ffi_prep_closure_loc") //
         (/* closure = */ m_closure.raw(),
          /* cif = */ m_cif.raw(),
          /* fun = */ entrypoint,
@@ -99,7 +99,7 @@ private:
     });
   }
 
-  static void entrypoint(::ffi_cif *cif, void *ret, void **args,
+  static void entrypoint(ffi_cif *cif, void *ret, void **args,
                          void *user_data) {
 
     if (cif == nullptr or user_data == nullptr) {
@@ -122,11 +122,10 @@ private:
       return;
 
     } else if constexpr (std::integral<return_type> and
-                         sizeof(return_type) < sizeof(::ffi_arg)) {
+                         sizeof(return_type) < sizeof(ffi_arg)) {
       // Workaround required by libffi, see documentation for ffi_call
       using widened_return_type =
-          std::conditional_t<std::is_signed_v<return_type>, ::ffi_sarg,
-                             ::ffi_arg>;
+          std::conditional_t<std::is_signed_v<return_type>, ffi_sarg, ffi_arg>;
 
       static_assert(alignof(widened_return_type) >= alignof(return_type),
                     "Overaligned integral return types are not supported");

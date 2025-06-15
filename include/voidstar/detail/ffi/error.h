@@ -8,7 +8,7 @@
 
 namespace voidstar::detail::ffi {
 
-[[nodiscard]] static auto ffi_status_name(::ffi_status status) -> std::string {
+[[nodiscard]] static auto ffi_status_name(ffi_status status) -> std::string {
   switch (status) {
   case FFI_OK:
     return "FFI_OK";
@@ -26,7 +26,7 @@ namespace voidstar::detail::ffi {
 struct ffi_error : std::runtime_error {
   using std::runtime_error::runtime_error;
 
-  ffi_error(std::string ffi_function, ::ffi_status status)
+  ffi_error(std::string ffi_function, ffi_status status)
       : std::runtime_error{ffi_function + ": error " +
                            ffi_status_name(status)} {}
 };

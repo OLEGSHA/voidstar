@@ -22,19 +22,19 @@ private:
   type_description<typename call_signature::return_type> m_return_type;
   std::tuple<type_description<A>...> m_arg_types;
 
-  using arg_type_list = std::array<::ffi_type *, call_signature::arg_count>;
+  using arg_type_list = std::array<ffi_type *, call_signature::arg_count>;
 
   arg_type_list m_arg_type_list = std::apply(
       [&](auto &&...arg_types) { return arg_type_list{arg_types.raw()...}; },
       m_arg_types);
 
-  ::ffi_cif m_raw;
+  ffi_cif m_raw;
 
   [[no_unique_address]] pin m_pin;
 
 public:
   cif_impl() {
-    ffi_call(::ffi_prep_cif, "ffi_prep_cif") //
+    ffi_call(ffi_prep_cif, "ffi_prep_cif") //
         (/* cif = */ &m_raw,
          /* abi = */ FFI_DEFAULT_ABI,
          /* nargs = */ m_arg_type_list.size(),
@@ -42,7 +42,7 @@ public:
          /* atypes = */ m_arg_type_list.data());
   }
 
-  [[nodiscard]] constexpr auto raw() noexcept -> ::ffi_cif * { return &m_raw; }
+  [[nodiscard]] constexpr auto raw() noexcept -> ffi_cif * { return &m_raw; }
 };
 
 template <typename call_signature>
