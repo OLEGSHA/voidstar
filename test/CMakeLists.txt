@@ -3,7 +3,8 @@ enable_testing()
 
 add_executable(tests
     closure.static.cpp
-    closure.cpp)
+    closure.cpp
+    types.cpp)
 
 target_link_libraries(tests
     PRIVATE
