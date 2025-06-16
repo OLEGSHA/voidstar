@@ -1,3 +1,6 @@
+#include "voidstar/detail/ffi/type/base.h"
+#include "voidstar/detail/ffi/type/layout.h"
+#include "voidstar/layout.h"
 #include <gtest/gtest.h>
 
 #include <voidstar.h>
@@ -7,6 +10,101 @@
 #include <memory>
 #include <thread>
 #include <type_traits>
+
+namespace voidstar::test {
+namespace {
+
+struct struct_wrapped_int {
+  int x;
+  auto operator==(struct_wrapped_int const &) const -> bool = default;
+};
+
+struct struct_wrapped_float {
+  float x;
+  auto operator==(struct_wrapped_float const &) const -> bool = default;
+};
+
+struct struct_wrapped_char {
+  char x;
+  auto operator==(struct_wrapped_char const &) const -> bool = default;
+};
+
+struct struct_wrapped_ptr {
+  int *x;
+  auto operator==(struct_wrapped_ptr const &) const -> bool = default;
+};
+
+struct struct_simple {
+  int x;
+  float y;
+
+  auto operator==(struct_simple const &) const -> bool = default;
+};
+
+struct struct_empty {
+  auto operator==(struct_empty const &) const -> bool = default;
+};
+
+struct struct_with_array {
+  int x;
+  float y[5];
+
+  auto operator==(struct_with_array const &) const -> bool = default;
+};
+
+struct struct_composite {
+  struct_simple a;
+  struct_with_array b;
+
+  auto operator==(struct_composite const &) const -> bool = default;
+};
+
+struct struct_with_array_of_structs {
+  struct_simple x[3];
+
+  auto operator==(struct_with_array_of_structs const &) const -> bool = default;
+};
+
+} // namespace
+} // namespace voidstar::test
+
+template <> struct voidstar::layout<voidstar::test::struct_wrapped_int> {
+  using members = std::tuple<int>;
+};
+
+template <> struct voidstar::layout<voidstar::test::struct_wrapped_float> {
+  using members = std::tuple<float>;
+};
+
+template <> struct voidstar::layout<voidstar::test::struct_wrapped_char> {
+  using members = std::tuple<char>;
+};
+
+template <> struct voidstar::layout<voidstar::test::struct_wrapped_ptr> {
+  using members = std::tuple<int *>;
+};
+
+template <> struct voidstar::layout<voidstar::test::struct_simple> {
+  using members = std::tuple<int, float>;
+};
+
+template <> struct voidstar::layout<voidstar::test::struct_empty> {
+  using members = std::tuple<>;
+};
+
+template <> struct voidstar::layout<voidstar::test::struct_with_array> {
+  using members = std::tuple<int, float[5]>;
+};
+
+template <> struct voidstar::layout<voidstar::test::struct_composite> {
+  using members = std::tuple<voidstar::test::struct_simple,
+                             voidstar::test::struct_with_array>;
+};
+
+template <>
+struct voidstar::layout<voidstar::test::struct_with_array_of_structs> {
+  using members = std::tuple<voidstar::test::struct_simple[3]>;
+};
 
 namespace voidstar::test {
 namespace {
@@ -57,7 +155,23 @@ using TestCases = testing::Types<
     float_param<long double>,
 
     param<&example_variable>,
-    param<&example_function>
+    param<&example_function>,
+
+    param<struct_wrapped_int{-10}>,
+    param<struct_wrapped_float{4.2f}>,
+    param<struct_wrapped_char{10}>,
+    param<struct_simple{.x = -10, .y = 4.2f}>,
+    param<struct_empty{}>,
+    param<struct_with_array{.x = -10, .y = {1.1f, 2.2f, 3.3f, 4.4f, 5.5f}}>,
+    param<struct_composite{
+        .a = {.x = -10, .y = 4.2f},
+        .b = {.x = -20, .y = {1.1f, 2.2f, 3.3f, 4.4f, 5.5f}},
+    }>,
+    param<struct_with_array_of_structs{.x = {
+        {.x = -10, .y = 1.1f},
+        {.x = -20, .y = 2.2f},
+        {.x = -30, .y = 3.3f},
+    }}>
 >;
 // clang-format on
 
