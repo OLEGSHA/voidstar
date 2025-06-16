@@ -16,7 +16,7 @@ template <typename> struct call_signature;
 
 template <typename R, typename... T>
 struct call_signature<default_abi_fn<R, T...>> {
-  using return_type = R;
+  using return_type = std::remove_cv_t<R>;
   using arg_types = std::tuple<std::decay_t<T>...>;
   static constexpr std::size_t arg_count = sizeof...(T);
 
