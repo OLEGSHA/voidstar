@@ -1,6 +1,3 @@
-#include "voidstar/detail/ffi/type/base.h"
-#include "voidstar/detail/ffi/type/layout.h"
-#include "voidstar/layout.h"
 #include <gtest/gtest.h>
 
 #include <voidstar.h>
