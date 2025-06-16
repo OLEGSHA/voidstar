@@ -47,11 +47,12 @@ requires std::is_union_v<T>
 struct type_description<T>;
 
 template <typename T>
-requires has_layout<T>
+requires has_computed_layout<T>
 struct type_description<T>;
 
 template <typename T>
-requires(not has_layout<T> and std::is_class_v<T>) struct type_description<T>;
+requires(not has_computed_layout<T> and
+         std::is_class_v<T>) struct type_description<T>;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Definitions
@@ -123,9 +124,9 @@ private:
 
   std::tuple<type_description<M>...> m_members;
 
-  member_list<size> m_member_list{std::apply(
-      [](auto const &...m) -> member_list<size> { return {m.raw()...}; },
-      m_members)};
+  member_list<size> m_member_list{
+      std::apply([](auto &...m) -> member_list<size> { return {{m.raw()...}}; },
+                 m_members)};
 
   ffi_type m_raw{
       .size = sizeof(T),
@@ -143,16 +144,17 @@ public:
 };
 
 template <typename T>
-requires has_layout<T>
+requires has_computed_layout<T>
 struct type_description<T>
-    : struct_type_description<T, typename layout<T>::members> {
+    : struct_type_description<T, typename computed_layout<T>::members> {
 };
 
 template <typename T>
-requires(not has_layout<T> and std::is_class_v<T>) struct type_description<T> {
+requires(not has_computed_layout<T> and
+         std::is_class_v<T>) struct type_description<T> {
   static_assert(dependent_false<T>::value,
                 "Memory layout of struct T must be specified using "
-                "a voidstar::detail::ffi::layout specialization");
+                "a voidstar::layout specialization");
 };
 
 } // namespace voidstar::detail::ffi
