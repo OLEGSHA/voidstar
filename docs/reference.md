@@ -127,14 +127,40 @@ payload_type const& payload() const noexcept;
 
 Return a reference to the payload instance within the closure. These are trivial getters with no overhead.
 
+## `voidstar::make_closure`
+
+```c++
+template <typename F, typename P>
+requires is-function-specifier<F> &&
+         is-invocable-as<P, F> &&
+         std::move_constructible<P>
+
+closure<F, P>
+make_closure(P payload);
+```
+
+Convenience factory function template that deduces the payload type of closures. Useful for movable lambdas and other move-constructible types.
+
+`voidstar::make_closure<F>(payload)` is equivalent to `voidstar::closure<F, decltype(payload)>(payload)`.
+
+Deduction of _F_ is not currently supported.
+
+### Example
+
+```c++
+auto payload_a = [&] { return x; };
+voidstar::closure<int(), decltype(payload_a)>
+  closure_a{std::move(payload_a)};
+
+auto closure_b = voidstar::make_closure<int()>([&] {
+  return y;
+});
+```
+
 ## Type support
 
 TODO
 
 ## `voidstar::layout`
-
-TODO
-
-## `voidstar::make_closure`
 
 TODO
