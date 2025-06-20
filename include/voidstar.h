@@ -33,6 +33,14 @@ public:
   [[nodiscard]] auto get() const noexcept -> fn_ptr_type { return m_raw.get(); }
 
   operator fn_ptr_type() const noexcept { return get(); }
+
+  [[nodiscard]] auto payload() noexcept -> payload_type & {
+    return m_raw.payload;
+  }
+
+  [[nodiscard]] auto payload() const noexcept -> payload_type const & {
+    return m_raw.payload;
+  }
 };
 
 } // namespace detail

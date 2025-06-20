@@ -70,12 +70,13 @@ public:
   operator fn_ptr_type() const noexcept { return get(); }
 };
 
-template <typename call_signature, typename payload>
+template <typename call_signature, typename P>
 class prepared_closure : public basic_prepared_closure<call_signature> {
+public:
+  P payload;
+
 private:
   using basic_type = basic_prepared_closure<call_signature>;
-
-  payload m_payload;
 
   [[no_unique_address]] pin m_pin;
 
@@ -83,7 +84,7 @@ public:
   template <typename... A>
   prepared_closure(A &&...args)
       : basic_type{&prepared_closure::entrypoint}, //
-        m_payload{std::forward<A>(args)...} {}
+        payload{std::forward<A>(args)...} {}
 
 private:
   using return_type = typename call_signature::return_type;
@@ -94,7 +95,7 @@ private:
   auto call(void **args) -> return_type {
     return with_indices_zero_thru<arg_count>([&](auto... i) {
       return std::invoke(
-          m_payload,
+          payload,
           *static_cast<std::tuple_element_t<i, arg_types> *>(args[i])...);
     });
   }

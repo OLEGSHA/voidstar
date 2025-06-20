@@ -122,6 +122,22 @@ Return a pointer to the generated C function that invokes the payload when calle
 
 These are trivial getters with minimal, if any, overhead.
 
+### Payload access
+
+```c++
+payload_type&
+payload()
+noexcept;
+```
+
+```c++
+payload_type const&
+payload()
+const noexcept;
+```
+
+Return a reference to the payload instance within the closure. These are trivial getters with no overhead.
+
 ## Type support
 
 TODO

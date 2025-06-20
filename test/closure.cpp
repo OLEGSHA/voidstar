@@ -7,6 +7,7 @@
 #include <memory>
 #include <thread>
 #include <type_traits>
+#include <utility>
 
 namespace voidstar::test {
 namespace {
@@ -123,6 +124,19 @@ TEST(Closure, NoThreadLocality) {
   EXPECT_EQ(calls, 1);
   run_in_new_thread([&] { cls->get()(); });
   EXPECT_EQ(calls, 2);
+}
+
+TEST(Closure, PayloadGetter) {
+  struct payload {
+    void operator()() {}
+    int value = 0;
+  };
+
+  closure<void(), payload> cls;
+
+  EXPECT_EQ(cls.payload().value, 0);
+  cls.payload().value = 42;
+  EXPECT_EQ(std::as_const(cls).payload().value, 42);
 }
 
 } // namespace
