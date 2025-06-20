@@ -49,6 +49,8 @@ private:
   cif<call_signature> m_cif;
   closure m_closure;
 
+  [[no_unique_address]] pin m_pin; // `this` is baked into the closure
+
 protected:
   basic_prepared_closure(void (*entrypoint)(ffi_cif *cif, void *ret,
                                             void **args, void *user_data)) {
@@ -75,8 +77,6 @@ public:
 
 private:
   using basic_type = basic_prepared_closure<call_signature>;
-
-  [[no_unique_address]] pin m_pin;
 
 public:
   template <typename... A>
