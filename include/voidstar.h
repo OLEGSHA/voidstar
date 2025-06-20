@@ -14,10 +14,10 @@ template <typename C, matches<C> P> class closure_impl {
 public:
   using call_signature = C;
   using fn_ptr_type = typename call_signature::fn_ptr_type;
-  using payload = P;
+  using payload_type = P;
 
 private:
-  detail::ffi::prepared_closure<call_signature, payload> m_raw;
+  detail::ffi::prepared_closure<call_signature, payload_type> m_raw;
 
 public:
   template <typename... A>

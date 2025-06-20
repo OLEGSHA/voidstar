@@ -22,10 +22,10 @@ concept correct_closure = //
   and requires {
     typename T::call_signature;
     typename T::fn_ptr_type;
-    typename T::payload;
+    typename T::payload_type;
   }
 
-  and std::same_as<typename T::payload, P>
+  and std::same_as<typename T::payload_type, P>
   and detail::matches<P, typename T::call_signature>
 
   and std::is_pointer_v<typename T::fn_ptr_type>

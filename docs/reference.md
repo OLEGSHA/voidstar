@@ -99,7 +99,7 @@ using fn_ptr_type = /* function pointer based on F */;
 _F_ as a function pointer. _fn_ptr_type_ points to a function with C linkage.
 
 ```c++
-using payload = P;
+using payload_type = P;
 ```
 
 Payload type.
