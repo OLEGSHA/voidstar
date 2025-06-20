@@ -66,8 +66,6 @@ public:
   [[nodiscard]] auto get() const noexcept -> fn_ptr_type {
     return reinterpret_cast<fn_ptr_type>(m_closure.executable_ptr());
   }
-
-  operator fn_ptr_type() const noexcept { return get(); }
 };
 
 template <typename call_signature, typename P>
