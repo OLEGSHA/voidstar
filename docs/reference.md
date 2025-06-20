@@ -22,7 +22,7 @@ Similarly, instantiating templates with arguments that do not meet the documente
 
 ```c++
 template <typename F, typename P>
-requires is-function-like<F> &&
+requires is-function-specifier<F> &&
          is-invocable-as<P, F>
 using closure = /* unspecified */;
 ```
@@ -107,12 +107,8 @@ Payload type.
 ### C function pointer access
 
 ```c++
-fn_ptr_type
-get()
-const noexcept;
-```
+fn_ptr_type get() const noexcept;
 
-```c++
 /* implicit */
 operator fn_ptr_type()
 const noexcept;
@@ -125,15 +121,8 @@ These are trivial getters with minimal, if any, overhead.
 ### Payload access
 
 ```c++
-payload_type&
-payload()
-noexcept;
-```
-
-```c++
-payload_type const&
-payload()
-const noexcept;
+payload_type& payload() noexcept;
+payload_type const& payload() const noexcept;
 ```
 
 Return a reference to the payload instance within the closure. These are trivial getters with no overhead.
