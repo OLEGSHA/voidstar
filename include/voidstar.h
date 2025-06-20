@@ -13,11 +13,13 @@ namespace detail {
 template <typename C, matches<C> P> class closure_impl {
 public:
   using call_signature = C;
-  using fn_ptr_type = typename call_signature::fn_ptr_type;
   using payload_type = P;
 
 private:
   detail::ffi::prepared_closure<call_signature, payload_type> m_raw;
+
+public:
+  using fn_ptr_type = typename decltype(m_raw)::fn_ptr_type;
 
 public:
   template <typename... A>
