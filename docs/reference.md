@@ -159,8 +159,87 @@ auto closure_b = voidstar::make_closure<int()>([&] {
 
 ## Type support
 
-TODO
+To generate trampoline functions at runtime, libffi requires a description of all types that make up the function signature. Calling conventions are complex and sometimes counterintuitive to developers accustomed to higher-level programming languages: for example, in x86_64 ABIs, `struct {int; float}` is passed differently from `struct {int; int}`, even though the sizes and alignments of the structs and their members are identical.
+
+voidstar is able to deconstruct function signatures into argument types and return types at compile time to statically prepare these type descriptions. However, this mechanism and its current implementation have their limits.
+
+Support can be extended to more types than listed below through [`voidstar::layout`](#voidstarlayout) specializations.
+
+### Types with built-in support
+
+Because voidstar targets C interfaces, built-in type support is mostly limited to types found in both C and C++.
+
+- Standard C++20 fundamental types except `std::nullptr_t`.
+- C99 `_Complex` fundamental types (when supported by compiler and libffi).
+- Pointer-to-object types, including `void*`, including pointers to unsupported types.
+- Pointer-to-function types.
+- Bounded arrays of any length of any supported type, including multidimensional arrays.
+- Enumerator types, including scoped and unscoped, including with and without fixed size.
+
+Note that arrays in function parameters decay to pointers-to-objects. Dedicated bounded array support is required for member types only.
 
 ## `voidstar::layout`
 
-TODO
+```c++
+template <typename T>
+struct layout;
+```
+
+A class template that may be specialized in user code to make a type supported by voidstar.
+
+### Usage
+
+The template may be fully or partially specialized for any cv-unqualified type not already supported, as long as `sizeof(T)` and `alignof(T)` are valid for that type. If support for new types is added in a minor update, voidstar will prioritize user-provided layouts.
+
+The specialization must define type alias `members`, which must be a `std::tuple`. Its contents correspond to `ffi_type::elements`; see below for most common use case. All specified types must be supported.
+
+The specialization must not declare any other members to ensure compatibility with future versions.
+
+> **Warning**
+>
+> voidstar will not attempt to validate provided layouts. Specifying a layout wrongly may lead to incorrect generated code on all or some platforms.
+
+### Non-empty standard-layout non-union class types
+
+voidstar guarantees correct behavior for non-empty standard-layout non-union class types. For such types, `members` must begin with the single base class if any, followed by the types of all non-static data members in definition order:
+
+```c++
+struct base { double d[2]; };
+
+template <> struct voidstar::layout<base> {
+  using members = std::tuple<double[2]>;
+};
+
+struct derived : base {
+  int a;
+  float b;
+};
+
+template <> struct voidstar::layout<derived> {
+  using members = std::tuple<base, int, float>;
+};
+```
+
+### Other types
+
+For all other types, voidstar will provide the following `ffi_type` to libffi:
+
+```c++
+ffi_type{
+  .size = sizeof(T),
+  .alignment = alignof(T),
+  .type = FFI_TYPE_STRUCT,
+  .elements = /* ffi_types of layout::members */,
+}
+```
+
+It it the responsibility of the user to verify that generated trampolines are correct.
+
+### A note on union types
+
+Unfotunately, the version of libffi that voidstar is designed against, 3.5, [does not provide dedicated union type support](https://github.com/libffi/libffi/issues/33). While workarounds exist, none of them can be applied blindly, and they may be limited to specific platforms.
+
+Users should do their own research to find and verify union handling approaches that suit them.
+
+As a starting point for that research, for many union types, it is possible to specify the largest union member as the sole element. `union{struct {char; char}; short}` is likely going to work, but `union {int; float}` will probably not.
+
