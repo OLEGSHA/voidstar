@@ -1,4 +1,5 @@
-#pragma once
+#ifndef VOIDSTAR_DETAIL_FFI_TYPE_BASE_H
+#define VOIDSTAR_DETAIL_FFI_TYPE_BASE_H
 
 #include <voidstar/detail/misc.h>
 
@@ -9,3 +10,5 @@ template <typename T> struct type_description {
 };
 
 } // namespace voidstar::detail::ffi
+
+#endif

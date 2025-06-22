@@ -1,4 +1,5 @@
-#pragma once
+#ifndef VOIDSTAR_DETAIL_FFI_TYPE_LAYOUT_H
+#define VOIDSTAR_DETAIL_FFI_TYPE_LAYOUT_H
 
 #include <voidstar/layout.h>
 
@@ -32,3 +33,5 @@ concept has_computed_layout = requires {
 };
 
 } // namespace voidstar::detail::ffi
+
+#endif

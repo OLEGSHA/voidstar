@@ -1,4 +1,5 @@
-#pragma once
+#ifndef VOIDSTAR_LAYOUT_H
+#define VOIDSTAR_LAYOUT_H
 
 namespace voidstar {
 
@@ -8,3 +9,5 @@ template <typename T> struct layout<const T> : layout<T> {};
 template <typename T> struct layout<volatile T> : layout<T> {};
 
 } // namespace voidstar
+
+#endif

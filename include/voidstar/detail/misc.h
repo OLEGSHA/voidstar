@@ -1,4 +1,5 @@
-#pragma once
+#ifndef VOIDSTAR_DETAIL_MISC_H
+#define VOIDSTAR_DETAIL_MISC_H
 
 #include <functional>
 #include <type_traits>
@@ -33,3 +34,5 @@ static constexpr auto n_copies(T value) -> std::array<T, N> {
 }
 
 } // namespace voidstar::detail
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef VOIDSTAR_DETAIL_FFI_TYPE_COMPOSITE_H
+#define VOIDSTAR_DETAIL_FFI_TYPE_COMPOSITE_H
 
 #include <voidstar/detail/ffi/type/base.h>
 #include <voidstar/detail/ffi/type/fundamental.h>
@@ -158,3 +159,5 @@ requires(not has_computed_layout<T> and
 };
 
 } // namespace voidstar::detail::ffi
+
+#endif

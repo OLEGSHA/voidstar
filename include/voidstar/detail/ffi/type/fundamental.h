@@ -1,4 +1,5 @@
-#pragma once
+#ifndef VOIDSTAR_DETAIL_FFI_TYPE_FUNDAMENTAL_H
+#define VOIDSTAR_DETAIL_FFI_TYPE_FUNDAMENTAL_H
 
 #include <voidstar/detail/ffi/type/base.h>
 #include <voidstar/detail/misc.h>
@@ -102,3 +103,5 @@ VOIDSTAR_DEFINE_TYPE(_Complex long double, ffi_type_complex_longdouble)
 #undef VOIDSTAR_DEFINE_TYPE
 
 } // namespace voidstar::detail::ffi
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef VOIDSTAR_DETAIL_FFI_CLOSURE_H
+#define VOIDSTAR_DETAIL_FFI_CLOSURE_H
 
 #include <voidstar/detail/ffi/cif.h>
 #include <voidstar/detail/misc.h>
@@ -142,3 +143,5 @@ private:
 };
 
 } // namespace voidstar::detail::ffi
+
+#endif

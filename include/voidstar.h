@@ -1,4 +1,5 @@
-#pragma once
+#ifndef VOIDSTAR_H
+#define VOIDSTAR_H
 
 #include <voidstar/detail/call_signature.h>
 #include <voidstar/detail/ffi/closure.h>
@@ -56,3 +57,5 @@ auto make_closure(P payload) -> closure<F, P> {
 }
 
 } // namespace voidstar
+
+#endif

@@ -1,4 +1,5 @@
-#pragma once
+#ifndef VOIDSTAR_DETAIL_CALL_SIGNATURE_H
+#define VOIDSTAR_DETAIL_CALL_SIGNATURE_H
 
 #include <voidstar/detail/misc.h>
 
@@ -53,3 +54,5 @@ concept matches =
 // clang-format on
 
 } // namespace voidstar::detail
+
+#endif

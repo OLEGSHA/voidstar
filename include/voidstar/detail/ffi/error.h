@@ -1,4 +1,5 @@
-#pragma once
+#ifndef VOIDSTAR_DETAIL_FFI_ERROR_H
+#define VOIDSTAR_DETAIL_FFI_ERROR_H
 
 #include <ffi.h>
 
@@ -42,3 +43,5 @@ ffi_call(auto ffi_func, std::string_view func_name) /* -> invoker */ {
 }
 
 } // namespace voidstar::detail::ffi
+
+#endif

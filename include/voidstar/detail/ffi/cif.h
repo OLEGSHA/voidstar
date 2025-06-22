@@ -1,4 +1,5 @@
-#pragma once
+#ifndef VOIDSTAR_DETAIL_FFI_CIF_H
+#define VOIDSTAR_DETAIL_FFI_CIF_H
 
 #include <voidstar/detail/ffi/error.h>
 #include <voidstar/detail/ffi/type.h>
@@ -48,3 +49,5 @@ template <typename call_signature>
 using cif = cif_impl<call_signature, typename call_signature::arg_types>;
 
 } // namespace voidstar::detail::ffi
+
+#endif
