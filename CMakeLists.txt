@@ -8,6 +8,18 @@ set(CMAKE_CXX_EXTENSIONS False)
 include(GNUInstallDirs)
 
 ################################################################################
+# Dependencies
+#
+
+set(_voidstar_module_path_save "${CMAKE_MODULE_PATH}")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
+
+find_package(libffi REQUIRED 3.0)
+
+set(CMAKE_MODULE_PATH "${_voidstar_module_path_save}")
+unset(_voidstar_module_path_save)
+
+################################################################################
 # Target
 #
 
