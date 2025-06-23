@@ -1,0 +1,15 @@
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+
+set(_voidstar_module_path_save "${CMAKE_MODULE_PATH}")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/find_modules")
+
+find_dependency(libffi 3.0)
+
+set(CMAKE_MODULE_PATH "${_voidstar_module_path_save}")
+unset(_voidstar_module_path_save)
+
+include("${CMAKE_CURRENT_LIST_DIR}/@PROJECT_NAME@-targets.cmake")
+
+check_required_components(@PROJECT_NAME@)

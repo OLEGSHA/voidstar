@@ -5,8 +5,6 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_CXX_EXTENSIONS False)
 
-include(GNUInstallDirs)
-
 ################################################################################
 # Dependencies
 #
@@ -31,11 +29,20 @@ target_include_directories(${PROJECT_NAME}
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
 )
 
-target_link_libraries(${PROJECT_NAME} INTERFACE ffi)
+target_link_libraries(${PROJECT_NAME} INTERFACE libffi::libffi)
+
+set_property(TARGET ${PROJECT_NAME} PROPERTY VERSION ${PROJECT_VERSION})
+set_property(TARGET ${PROJECT_NAME} PROPERTY
+    INTERFACE_${PROJECT_NAME}_MAJOR_VERSION 3)
+set_property(TARGET ${PROJECT_NAME} APPEND PROPERTY
+    COMPATIBLE_INTERFACE_STRING ${PROJECT_NAME}_MAJOR_VERSION
+)
 
 ################################################################################
 # Install
 #
+
+include(GNUInstallDirs)
 
 install(TARGETS ${PROJECT_NAME}
     EXPORT ${PROJECT_NAME}-targets
@@ -61,6 +68,40 @@ install(
 install(EXPORT ${PROJECT_NAME}-targets
     FILE ${PROJECT_NAME}-targets.cmake
     NAMESPACE ${PROJECT_NAME}::
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
+)
+
+################################################################################
+# Package
+#
+
+# Findlibffi.cmake
+install(
+    FILES cmake/Findlibffi.cmake
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}/find_modules
+)
+
+include(CMakePackageConfigHelpers)
+
+# Configuration file
+configure_package_config_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/config.cmake.in
+    "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
+    INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
+)
+
+# generate the version file for the config file
+write_basic_package_version_file(
+  "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
+  VERSION "${PROJECT_VERSION}"
+  COMPATIBILITY SameMajorVersion
+  ARCH_INDEPENDENT
+)
+
+install(
+    FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake"
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}
 )
 
