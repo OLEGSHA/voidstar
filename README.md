@@ -36,11 +36,13 @@ Check out a more complete [example](example/background_jobs/) or see [full libra
 
 The library is implemented and tested on amd64 Linux with g++ 12 and clang++-14. It has not yet been used in a real production environment.
 
+Compile-time features tested with g++-11, -12, -13, clang++-14, -18, libffi 3.4.2, 3.4.4, 3.4.6.
+
 ### TODO
 - [x] Proper tests
 - [x] Main doc
 - [ ] Inline docs
-- [ ] Conan & proper CMake
+- [x] Conan & proper CMake
 - [ ] Struct layout guessing via structured bindings
 - [ ] Figure out what to do with type erasure
 - [x] Example: background jobs
