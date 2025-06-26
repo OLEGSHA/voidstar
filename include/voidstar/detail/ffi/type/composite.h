@@ -24,41 +24,6 @@ template <std::size_t N> struct member_list : std::array<ffi_type *, N + 1> {
   }
 };
 
-// To enable arbitrarily nested specialization usage, all declarations must
-// occur before all definitions.
-
-////////////////////////////////////////////////////////////////////////////////
-// Declarations
-//
-
-template <typename T>
-requires std::is_pointer_v<T> or std::is_unbounded_array_v<T>
-struct type_description<T>;
-
-template <typename T>
-requires std::is_enum_v<T>
-struct type_description<T>;
-
-template <typename T>
-requires std::is_bounded_array_v<T>
-struct type_description<T>;
-
-template <typename T>
-requires std::is_union_v<T>
-struct type_description<T>;
-
-template <typename T>
-requires has_computed_layout<T>
-struct type_description<T>;
-
-template <typename T>
-requires(not has_computed_layout<T> and
-         std::is_class_v<T>) struct type_description<T>;
-
-////////////////////////////////////////////////////////////////////////////////
-// Definitions
-//
-
 template <typename T>
 requires std::is_pointer_v<T> or std::is_unbounded_array_v<T>
 struct type_description<T> {
