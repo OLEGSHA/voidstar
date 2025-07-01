@@ -1,3 +1,6 @@
+// voidstar library. Copyright (c) 2025 OLEGSHA
+// SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+
 #ifndef BADLIB_H
 #define BADLIB_H
 
