@@ -123,8 +123,9 @@ static_assert(closure_valid<int(), decltype([] { return int{}; })>);
 static_assert(closure_invalid<int(), decltype([] {})>);
 static_assert(closure_invalid<void(), decltype([] { return int{}; })>);
 
-static_assert(closure_valid<int *(), decltype([] { return (int *){}; })>);
-static_assert(closure_valid<int const *(), decltype([] { return (int *){}; })>);
+constexpr int *null_intp = nullptr;
+static_assert(closure_valid<int *(), decltype([] { return null_intp; })>);
+static_assert(closure_valid<int const *(), decltype([] { return null_intp; })>);
 static_assert(
     closure_valid<std::uint8_t(), decltype([] { return std::uint8_t{}; })>);
 static_assert(
