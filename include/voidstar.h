@@ -11,21 +11,26 @@ namespace voidstar {
 
 namespace detail {
 
-template <typename C, matches<C> P> class closure_impl {
+template <typename C, matches<C> P>
+class closure_impl
+    : private detail::ffi::prepared_closure<C, closure_impl<C, P>> {
+private:
+  using base = detail::ffi::prepared_closure<C, closure_impl<C, P>>;
+  friend base;
+
 public:
   using call_signature = C;
   using payload_type = P;
 
-private:
-  detail::ffi::prepared_closure<call_signature, payload_type> m_raw;
+protected:
+  payload_type m_payload;
 
 public:
-  using fn_ptr_type = typename decltype(m_raw)::fn_ptr_type;
+  using typename base::fn_ptr_type;
 
-public:
   template <typename... A>
   requires std::constructible_from<P, A...> closure_impl(A &&...args)
-      : m_raw{std::forward<A>(args)...} {}
+      : m_payload{std::forward<A>(args)...} {}
 
   closure_impl(closure_impl const &) = delete;
   auto operator=(closure_impl const &) -> closure_impl & = delete;
@@ -33,16 +38,16 @@ public:
   closure_impl(closure_impl &&) = delete;
   auto operator=(closure_impl &&) -> closure_impl & = delete;
 
-  [[nodiscard]] auto get() const noexcept -> fn_ptr_type { return m_raw.get(); }
+  using base::get;
 
   operator fn_ptr_type() const noexcept { return get(); }
 
-  [[nodiscard]] auto payload() noexcept -> payload_type & {
-    return m_raw.payload;
+  [[nodiscard]] auto payload() noexcept -> payload_type & { //
+    return m_payload;
   }
 
   [[nodiscard]] auto payload() const noexcept -> payload_type const & {
-    return m_raw.payload;
+    return m_payload;
   }
 };
 

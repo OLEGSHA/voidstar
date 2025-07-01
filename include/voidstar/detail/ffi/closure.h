@@ -71,19 +71,13 @@ public:
   }
 };
 
-template <typename call_signature, typename P>
+template <typename call_signature, typename derived>
 class prepared_closure : public basic_prepared_closure<call_signature> {
-public:
-  P payload;
-
 private:
   using basic_type = basic_prepared_closure<call_signature>;
 
 public:
-  template <typename... A>
-  prepared_closure(A &&...args)
-      : basic_type{&prepared_closure::entrypoint}, //
-        payload{std::forward<A>(args)...} {}
+  prepared_closure() : basic_type{&prepared_closure::entrypoint} {}
 
 private:
   using return_type = typename call_signature::return_type;
@@ -94,7 +88,7 @@ private:
   auto call(void **args) -> return_type {
     return with_indices_zero_thru<arg_count>([&](auto... i) {
       return std::invoke(
-          payload,
+          static_cast<derived *>(this)->m_payload,
           *static_cast<std::tuple_element_t<i, arg_types> *>(args[i])...);
     });
   }
