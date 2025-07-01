@@ -55,7 +55,7 @@ private:
 protected:
   basic_prepared_closure(void (*entrypoint)(ffi_cif *cif, void *ret,
                                             void **args, void *user_data)) {
-    ffi_call(ffi_prep_closure_loc, "ffi_prep_closure_loc") //
+    ffi::call(ffi_prep_closure_loc, "ffi_prep_closure_loc") //
         (/* closure = */ m_closure.raw(),
          /* cif = */ m_cif.raw(),
          /* fun = */ entrypoint,

@@ -11,7 +11,7 @@
 
 namespace voidstar::detail::ffi {
 
-[[nodiscard]] static auto ffi_status_name(ffi_status status) -> std::string {
+[[nodiscard]] static auto status_name(ffi_status status) -> std::string {
   switch (status) {
   case FFI_OK:
     return "FFI_OK";
@@ -29,14 +29,14 @@ namespace voidstar::detail::ffi {
 struct error : voidstar::error {
   using voidstar::error::error;
 
-  error(std::string ffi_function, ffi_status status)
-      : voidstar::error{ffi_function + ": error " + ffi_status_name(status)} {}
+  error(std::string function, ffi_status status)
+      : voidstar::error{function + ": error " + status_name(status)} {}
 };
 
-[[nodiscard]] static auto
-ffi_call(auto ffi_func, std::string_view func_name) /* -> invoker */ {
+[[nodiscard]] static auto call(auto function,
+                               std::string_view func_name) /* -> invoker */ {
   return [=](auto... args) {
-    auto const result = ffi_func(args...);
+    auto const result = function(args...);
     if (result != FFI_OK) {
       throw error{std::string{func_name}, result};
     }

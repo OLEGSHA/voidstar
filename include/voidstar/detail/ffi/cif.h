@@ -34,7 +34,7 @@ private:
 
 public:
   cif_impl() {
-    ffi_call(ffi_prep_cif, "ffi_prep_cif") //
+    ffi::call(ffi_prep_cif, "ffi_prep_cif") //
         (/* cif = */ &m_raw,
          /* abi = */ FFI_DEFAULT_ABI,
          /* nargs = */ m_arg_type_list.size(),
