@@ -8,6 +8,12 @@
 
 namespace voidstar {
 
+/**
+ * @brief Base class for exceptions thrown by voidstar internals on unexpected
+ * errors.
+ *
+ * Specific subclasses are private unless documented.
+ */
 struct error : std::runtime_error {
   using std::runtime_error::runtime_error;
 };
