@@ -95,9 +95,20 @@ VOIDSTAR_DEFINE_TYPE(double, ffi_type_double)
 VOIDSTAR_DEFINE_TYPE(long double, ffi_type_longdouble)
 
 #ifdef FFI_TARGET_HAS_COMPLEX_TYPE
+
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wc99-extensions"
+#endif
+
 VOIDSTAR_DEFINE_TYPE(_Complex float, ffi_type_complex_float)
 VOIDSTAR_DEFINE_TYPE(_Complex double, ffi_type_complex_double)
 VOIDSTAR_DEFINE_TYPE(_Complex long double, ffi_type_complex_longdouble)
+
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+
 #endif
 
 #undef VOIDSTAR_DEFINE_TYPE

@@ -77,7 +77,7 @@ struct type_description<T> {
   static_assert(dependent_false<T>::value, "Union types are not yet supported");
 };
 
-template <typename T, typename member_types> struct struct_type_description;
+template <typename T, typename member_types> class struct_type_description;
 
 template <typename T, typename... M>
 class struct_type_description<T, std::tuple<M...>> {

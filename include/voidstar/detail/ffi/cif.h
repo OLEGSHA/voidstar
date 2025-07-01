@@ -14,7 +14,7 @@
 
 namespace voidstar::detail::ffi {
 
-template <typename call_signature, typename arg_types> struct cif_impl;
+template <typename call_signature, typename arg_types> class cif_impl;
 
 template <typename call_signature, typename... A>
 class cif_impl<call_signature, std::tuple<A...>> {
