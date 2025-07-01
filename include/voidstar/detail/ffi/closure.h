@@ -32,7 +32,7 @@ public:
                 ffi_closure_alloc(sizeof(ffi_closure), &m_executable_ptr)),
         } {
     if (m_raw == nullptr or m_executable_ptr == nullptr) {
-      throw ffi_error{"Could not allocate an FFI closure"};
+      throw ffi::error{"Could not allocate an FFI closure"};
     }
   }
 

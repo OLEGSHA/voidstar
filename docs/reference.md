@@ -75,7 +75,7 @@ closure(A&&... payload_args);
 
 Allocates and prepares a libffi closure with call signature _F_, then creates an instance of _P_ with its `P(std::forward<A>(payload_args)...)` constructor.
 
-In some circumstances, such as running out of memory, lacking necessary permissions from the OS, or a voidstar bug, libffi may fail to allocate or prepare the closure. In this event, an unspecified exception derived from `std::runtime_error` is thrown, and _P_ is not initialized.
+In some circumstances, such as running out of memory, lacking necessary permissions from the OS, or a voidstar bug, libffi may fail to allocate or prepare the closure. In this event, an exception derived from `voidstar::error` is thrown, and _P_ is not initialized.
 
 If the constructor of _P_ throws, libffi resources are released, and the exception is propagated to the caller.
 
@@ -242,4 +242,8 @@ Unfotunately, the version of libffi that voidstar is designed against, 3.5, [doe
 Users should do their own research to find and verify union handling approaches that suit them.
 
 As a starting point for that research, for many union types, it is possible to specify the largest union member as the sole element. `union{struct {char; char}; short}` is likely going to work, but `union {int; float}` will probably not.
+
+## `voidstar::error`
+
+A subclass of `std::runtime_error`. Exceptions derived from this class thrown by voidstar in case of abnormal failures.
 

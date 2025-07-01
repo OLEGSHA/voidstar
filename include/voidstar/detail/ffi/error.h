@@ -1,6 +1,8 @@
 #ifndef VOIDSTAR_DETAIL_FFI_ERROR_H
 #define VOIDSTAR_DETAIL_FFI_ERROR_H
 
+#include <voidstar/error.h>
+
 #include <ffi.h>
 
 #include <exception>
@@ -24,12 +26,11 @@ namespace voidstar::detail::ffi {
   }
 };
 
-struct ffi_error : std::runtime_error {
-  using std::runtime_error::runtime_error;
+struct error : voidstar::error {
+  using voidstar::error::error;
 
-  ffi_error(std::string ffi_function, ffi_status status)
-      : std::runtime_error{ffi_function + ": error " +
-                           ffi_status_name(status)} {}
+  error(std::string ffi_function, ffi_status status)
+      : voidstar::error{ffi_function + ": error " + ffi_status_name(status)} {}
 };
 
 [[nodiscard]] static auto
@@ -37,7 +38,7 @@ ffi_call(auto ffi_func, std::string_view func_name) /* -> invoker */ {
   return [=](auto... args) {
     auto const result = ffi_func(args...);
     if (result != FFI_OK) {
-      throw ffi_error{std::string{func_name}, result};
+      throw error{std::string{func_name}, result};
     }
   };
 }
