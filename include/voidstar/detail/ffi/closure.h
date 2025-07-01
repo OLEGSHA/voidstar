@@ -45,16 +45,15 @@ public:
   };
 };
 
-template <typename call_signature> class basic_prepared_closure {
+template <typename call_signature, typename derived> class prepared_closure {
 private:
   cif<call_signature> m_cif;
   closure m_closure;
 
   [[no_unique_address]] pin m_pin; // `this` is baked into the closure
 
-protected:
-  basic_prepared_closure(void (*entrypoint)(ffi_cif *cif, void *ret,
-                                            void **args, void *user_data)) {
+public:
+  prepared_closure() {
     ffi::call(ffi_prep_closure_loc, "ffi_prep_closure_loc") //
         (/* closure = */ m_closure.raw(),
          /* cif = */ m_cif.raw(),
@@ -62,22 +61,6 @@ protected:
          /* user_data = */ this,
          /* codeloc = */ m_closure.executable_ptr());
   }
-
-public:
-  using fn_ptr_type = typename call_signature::fn_ptr_type;
-
-  [[nodiscard]] auto get() const noexcept -> fn_ptr_type {
-    return reinterpret_cast<fn_ptr_type>(m_closure.executable_ptr());
-  }
-};
-
-template <typename call_signature, typename derived>
-class prepared_closure : public basic_prepared_closure<call_signature> {
-private:
-  using basic_type = basic_prepared_closure<call_signature>;
-
-public:
-  prepared_closure() : basic_type{&prepared_closure::entrypoint} {}
 
 private:
   using return_type = typename call_signature::return_type;
@@ -108,8 +91,7 @@ private:
       return;
     }
 
-    auto *const self =
-        static_cast<prepared_closure *>(static_cast<basic_type *>(user_data));
+    auto *const self = static_cast<prepared_closure *>(user_data);
 
     if constexpr (is_void) {
       (void)self->call(args);
@@ -133,6 +115,13 @@ private:
       *ret_typed = static_cast<return_type>(self->call(args));
       return;
     }
+  }
+
+public:
+  using fn_ptr_type = typename call_signature::fn_ptr_type;
+
+  [[nodiscard]] auto get() const noexcept -> fn_ptr_type {
+    return reinterpret_cast<fn_ptr_type>(m_closure.executable_ptr());
   }
 };
 
