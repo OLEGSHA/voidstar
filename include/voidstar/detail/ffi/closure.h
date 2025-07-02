@@ -16,15 +16,18 @@
 
 namespace voidstar::detail::ffi {
 
+/// @brief A RAII wrapper for a `ffi_closure`.
 class closure {
 private:
+  /// @brief Type-erased function pointer to the trampoline.
+  void *m_executable_ptr;
+
   struct deleter {
     void operator()(ffi_closure *writable) const noexcept {
       ffi_closure_free(writable);
     }
   };
 
-  void *m_executable_ptr;
   std::unique_ptr<ffi_closure, deleter> m_raw;
 
 public:
@@ -39,15 +42,25 @@ public:
     }
   }
 
+  /// @brief Get type-erased function pointer to the trampoline.
   [[nodiscard]] auto executable_ptr() const noexcept -> void * {
     return m_executable_ptr;
   };
 
+  /// @brief Pointer to underlying `ffi_closure` struct.
   [[nodiscard]] auto raw() const noexcept -> ffi_closure * {
     return m_raw.get();
   };
 };
 
+/**
+ * @brief A RAII wrapper for a prepared `ffi_closure` and referenced objects.
+ *
+ * @tparam call_signature A detail::call_signature describing the call signature
+ * of the trampoline.
+ * @tparam derived A CRTP parameter; must have an `m_payload` that
+ * `detail::matches` @a call_signature.
+ */
 template <typename call_signature, typename derived> class prepared_closure {
 private:
   cif<call_signature> m_cif;
@@ -71,6 +84,16 @@ private:
   using arg_types = typename call_signature::arg_types;
   static constexpr std::size_t arg_count = call_signature::arg_count;
 
+  /**
+   * @brief Invoke `derived::m_payload` with arguments from @a args and forward
+   * its return value, if any.
+   *
+   * @param args A pointer to an array of #arg_count pointers to individual
+   * argument values of types from @a call_signature.
+   *
+   * @return For non-void call signatures, the return value from the payload
+   * coerced into call signature's return type.
+   */
   auto call(void **args) -> return_type {
     return with_indices_zero_thru<arg_count>([&](auto... i) {
       return std::invoke(
@@ -79,6 +102,9 @@ private:
     });
   }
 
+  /**
+   * @brief Called by libffi from within the trampoline.
+   */
   static void entrypoint(ffi_cif *cif, void *ret, void **args,
                          void *user_data) {
 
@@ -121,8 +147,10 @@ private:
   }
 
 public:
+  /// @brief Pointer-to-function type of this closure.
   using fn_ptr_type = typename call_signature::fn_ptr_type;
 
+  /// @brief Obtain a function pointer to the trampoline.
   [[nodiscard]] auto get() const noexcept -> fn_ptr_type {
     return reinterpret_cast<fn_ptr_type>(m_closure.executable_ptr());
   }
