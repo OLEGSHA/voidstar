@@ -20,13 +20,16 @@
 
 namespace voidstar::detail::ffi {
 
+/// @brief A null-terminated list of `ffi_type` pointers.
 template <std::size_t N> struct member_list : std::array<ffi_type *, N + 1> {
+  /// @brief Initialize the list by copying values and appending a terminator.
   constexpr member_list(std::array<ffi_type *, N> values) noexcept {
     std::ranges::copy(values, this->data());
     (*this)[N] = nullptr;
   }
 };
 
+// Pointer-like types
 template <typename T>
 requires std::is_pointer_v<T> or std::is_unbounded_array_v<T>
 struct type_description<T> {
@@ -35,6 +38,7 @@ struct type_description<T> {
   }
 };
 
+// Enumeration types
 template <typename T>
 requires std::is_enum_v<T>
 struct type_description<T> {
@@ -44,6 +48,7 @@ struct type_description<T> {
   }
 };
 
+// Array types
 template <typename T>
 requires std::is_bounded_array_v<T>
 class type_description<T> {
@@ -80,6 +85,8 @@ struct type_description<T> {
   static_assert(dependent_false<T>::value, "Union types are not yet supported");
 };
 
+// Implementation of layout-based type_descriptions is greatly shortened if
+// argument types are a pack
 template <typename T, typename member_types> class struct_type_description;
 
 template <typename T, typename... M>
@@ -112,6 +119,7 @@ public:
   }
 };
 
+// Types using voidstar::layout or deduced layouts
 template <typename T>
 requires has_computed_layout<T>
 struct type_description<T>

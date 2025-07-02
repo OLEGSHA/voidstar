@@ -8,6 +8,11 @@
 
 namespace voidstar::detail::ffi {
 
+/**
+ * @brief Provides a `ffi_type*` for @a T.
+ *
+ * Specializations must provide `constexpr auto raw() noexcept -> ffi_type *`.
+ */
 template <typename T> struct type_description {
   static_assert(dependent_false<T>::value, "This type is not supported");
 };
