@@ -36,7 +36,7 @@ Check out a more complete [example](example/background_jobs/) or see [full libra
 
 The library is implemented and tested on amd64 Linux with g++ 12 and clang++-14. It has not yet been used in a real production environment.
 
-Compile-time features tested with g++-11, -12, -13, clang++-14, -18, libffi 3.4.2, 3.4.4, 3.4.6.
+Compile-time features tested with g++-11, -12, -13, clang++-14, -18, MSVC 19, libffi 3.4.2, 3.4.4, 3.4.6.
 
 ### TODO
 - [x] Proper tests
