@@ -6,7 +6,7 @@ class voidstarRecipe(ConanFile):
     name = "voidstar"
     package_type = "header-library"
 
-    license = "EPL-2.0"
+    license = "EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0"
     author = "OLEGSHA (kvadropups+voidstar@gmail.com)"
     url = "https://github.com/OLEGSHA/voidstar"
     description = "Converts any C++ lambda to function pointer."
