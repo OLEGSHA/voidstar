@@ -17,6 +17,7 @@
 
 namespace voidstar::detail::ffi {
 
+// Implementation of cif is greatly shortened if argument types are a pack
 template <typename call_signature, typename arg_types> class cif_impl;
 
 template <typename call_signature, typename... A>
@@ -33,7 +34,7 @@ private:
 
   ffi_cif m_raw;
 
-  [[no_unique_address]] pin m_pin;
+  [[no_unique_address]] pin m_pin; // There are a lot of pointers into self
 
 public:
   cif_impl() {
@@ -45,9 +46,14 @@ public:
          /* atypes = */ m_arg_type_list.data());
   }
 
+  /// @brief Pointer to underlying `ffi_cif` struct.
   [[nodiscard]] constexpr auto raw() noexcept -> ffi_cif * { return &m_raw; }
 };
 
+/**
+ * @brief A RAII wrapper for a `ffi_cif` and referenced `ffi_type`s for the
+ * given @a call_signature.
+ */
 template <typename call_signature>
 using cif = cif_impl<call_signature, typename call_signature::arg_types>;
 
