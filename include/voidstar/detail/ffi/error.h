@@ -14,6 +14,7 @@
 
 namespace voidstar::detail::ffi {
 
+/// @brief libffi constant name for @a status or `to_string(status)`.
 [[nodiscard]] static auto status_name(ffi_status status) -> std::string {
   switch (status) {
   case FFI_OK:
@@ -29,6 +30,7 @@ namespace voidstar::detail::ffi {
   }
 };
 
+/// @brief A libffi call has not completed successfully.
 struct error : voidstar::error {
   using voidstar::error::error;
 
@@ -36,6 +38,14 @@ struct error : voidstar::error {
       : voidstar::error{function + ": error " + status_name(status)} {}
 };
 
+/**
+ * @brief libffi function caller with automatic error handling.
+ *
+ * Returns a callable that invokes @a function with arguments provided to it and
+ * checks the return code. If it is not `FFI_OK`, throws an ffi::error.
+ *
+ * @param func_name Name of @a function for error reporting.
+ */
 [[nodiscard]] static auto call(auto function,
                                std::string_view func_name) /* -> invoker */ {
   return [=](auto... args) {
