@@ -1,0 +1,14 @@
+# See also recipe in packaging/conan/
+
+[generators]
+CMakeDeps
+CMakeToolchain
+
+[layout]
+cmake_layout
+
+[requires]
+libffi/[>=3]
+
+[test_requires]
+gtest/[>=1.11]

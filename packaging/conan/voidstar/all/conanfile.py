@@ -1,5 +1,5 @@
 from conan import ConanFile
-from conan.tools.files import copy
+from conan.tools.files import get, copy
 
 
 class voidstarRecipe(ConanFile):
@@ -12,12 +12,13 @@ class voidstarRecipe(ConanFile):
     description = "Converts any C++ lambda to function pointer."
     topics = ("cpp20", "libffi")
 
-    # Sources
-    exports_sources = "include/*", "LICENSE"
     no_copy_source=True
 
     # Automatically manage the package ID clearing of settings and options
     implements = ["auto_header_only"]
+
+    def source(self):
+        get(self, **self.conan_data["sources"][self.version],  strip_root=True)
 
     def requirements(self):
         self.requires("libffi/[>=3]")
