@@ -40,3 +40,26 @@ Compile-time features tested with g++-11, -12, -13, clang++-14, -18, MSVC 19, li
 
 ### TODO
 - [ ] Struct layout guessing via structured bindings (Boost.PFR?)
+
+## Development setup
+
+### Debian 12+ / Ubuntu 22+
+
+```sh
+sudo apt install g++ make cmake
+sudo apt install libffi-dev libgtest-dev
+cmake -B build
+cmake --build build
+```
+
+### Conan 2.x
+
+```sh
+conan install . -s build_type=Debug --build=missing
+cmake --preset conan-debug
+cmake --build --preset conan-debug
+```
+
+On systems with CMake version below 3.23, --preset won't work. See output of conan install for details.
+
+See also Conan recipe for repositories in [packaging/conan/](packaging/conan/).
